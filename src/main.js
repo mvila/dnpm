@@ -7,7 +7,6 @@ import yargs from 'yargs';
 import semver from 'semver';
 import isEqual from 'lodash.isequal';
 import fstream from 'fstream-npm';
-import normalizePackageData from 'normalize-package-data';
 
 let argv = yargs
   .usage('Usage: dnmp <command> [packages...]')
@@ -40,7 +39,7 @@ async function getCurrentPackage() {
   if (!fs.existsSync(CURRENT_PACKAGE_PATH)) {
     throw new Error('current package.json not found');
   }
-  currentPackage = fs.readFileSync(CURRENT_PACKAGE_PATH);
+  currentPackage = fs.readFileSync(CURRENT_PACKAGE_PATH, 'utf8');
   currentPackage = JSON.parse(currentPackage);
   return currentPackage;
 }
@@ -71,8 +70,7 @@ async function getLocalPackages() {
   for (let dir of dirs) {
     let path = pathModule.join(dir, 'package.json');
     if (!fs.existsSync(path)) continue;
-    let pkg = fs.readFileSync(path);
-    normalizePackageData(pkg);
+    let pkg = fs.readFileSync(path, 'utf8');
     pkg = JSON.parse(pkg);
     localPackages.push({ path: dir, pkg });
   }
@@ -148,13 +146,14 @@ async function packageIsUpToDate(source, target) {
   let targetPackagePath = pathModule.join(target, 'package.json');
   if (!fs.existsSync(targetPackagePath)) return false;
 
-  let targetPackage = fs.readFileSync(targetPackagePath);
-  normalizePackageData(targetPackage);
+  let targetPackage = fs.readFileSync(targetPackagePath, 'utf8');
   targetPackage = JSON.parse(targetPackage);
 
   if (sourcePackage.version !== targetPackage.version) return false;
 
-  if (!isEqual(sourcePackage.dependencies, targetPackage.dependencies)) return false;
+  let sourceDependencies = sourcePackage.dependencies || {};
+  let targetDependencies = targetPackage.dependencies || {};
+  if (!isEqual(sourceDependencies, targetDependencies)) return false;
 
   for (let file of sourceContent.files) {
     let sourceModifiedTime = file.modifiedTime;
