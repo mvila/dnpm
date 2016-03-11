@@ -88,7 +88,7 @@ function fetchPackageContent(path) {
     fstream({ path })
       .on('entry', function(entry) {
         let props = entry.props;
-        if (props.basename !== 'package.json') {
+        if (props.basename !== 'package.json' && props.basename !== '.gitignore' && props.basename !== '.npmignore') {
           let filePath = pathModule.relative(path, props.path);
           files.push({ path: filePath, modifiedTime: props.mtime });
         }
