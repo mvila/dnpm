@@ -20,6 +20,9 @@ let argv = yargs
   .describe('S', 'Save version numbers in package.json')
   .boolean('dev')
   .describe('dev', 'Include devDependencies packages')
+  .boolean('v')
+  .alias('v', 'verbose')
+  .describe('v', 'Make the output more verbose')
   .help('h')
   .alias('h', 'help')
   .argv;
@@ -153,12 +156,24 @@ async function packageIsUpToDate(source, target) {
 
   let sourceDependencies = sourcePackage.dependencies || {};
   let targetDependencies = targetPackage.dependencies || {};
-  if (!isEqual(sourceDependencies, targetDependencies)) return false;
+  if (!isEqual(sourceDependencies, targetDependencies)) {
+    if (argv.verbose) {
+      console.log('Source and target dependencies are different');
+      console.log('Source:', sourceDependencies);
+      console.log('Target:', targetDependencies);
+    }
+    return false;
+  }
 
   for (let file of sourceContent.files) {
     let sourceModifiedTime = file.modifiedTime;
     let targetPath = pathModule.join(target, file.path);
-    if (!fs.existsSync(targetPath)) return false;
+    if (!fs.existsSync(targetPath)) {
+      if (argv.verbose) {
+        console.log('Missing target file: ' + targetPath);
+      }
+      return false;
+    }
     let targetStats = fs.statSync(targetPath);
     let targetModifiedTime = targetStats.mtime;
     if (sourceModifiedTime.valueOf() !== targetModifiedTime.valueOf()) return false;
@@ -185,6 +200,9 @@ async function installDependencies(dependencies) {
     return pathModule.relative('.', dependency.path);
   });
   let cmd = `npm install ${paths.join(' ')}`;
+  if (argv.verbose) {
+    console.log(cmd);
+  }
   childProcess.execSync(cmd, { stdio: 'inherit' });
 }
 
