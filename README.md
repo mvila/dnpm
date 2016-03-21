@@ -4,7 +4,7 @@ Like `npm` but fetches packages from a local directory rather than from the regi
 
 ## Why?
 
-Since years, I struggle with `npm` when it comes to work with in progress dependencies. The official solution is to use `npm link` but unfortunately it doesn't work that well. Many problems arise when we start to use tools like [Babel](https://babeljs.io/) or [Browserify](http://browserify.org/).
+Since years, I struggle with `npm` when it comes to work with in progress dependencies. The official solution is to use `npm link` but unfortunately it doesn't work that well when we start to use tools like [Babel](https://babeljs.io/) or [Browserify](http://browserify.org/).
 
 So, what are the remaining options?
 
