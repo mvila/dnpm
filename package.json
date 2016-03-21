@@ -4,6 +4,7 @@
   "description": "Like npm but fetches packages from a local directory rather than from the registry",
   "author": "Manuel Vila <mvila@3base.com>",
   "license": "MIT",
+  "reveal": true,
   "main": "lib/index.js",
   "bin": "./bin/cli.js",
   "repository": {
