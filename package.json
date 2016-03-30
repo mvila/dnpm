@@ -1,6 +1,6 @@
 {
   "name": "dnpm",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "Like npm but fetches packages from a local directory rather than from the registry",
   "keywords": [
     "npm",
