@@ -196,10 +196,12 @@ async function getOutdatedDependencies() {
 }
 
 async function installDependencies(dependencies) {
-  let paths = dependencies.map((dependency) => {
+  let paths = dependencies.map(dependency => {
     return pathModule.relative('.', dependency.path);
   });
-  let cmd = `npm install ${paths.join(' ')}`;
+  paths = paths.map(path => '"' + path + '"');
+  paths = paths.join(' ');
+  let cmd = `npm install ${paths}`;
   if (argv.verbose) {
     console.log(cmd);
   }
